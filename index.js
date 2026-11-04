@@ -26,3 +26,19 @@ app.get('/komik', async (req, res) => {
         res.status(500).send(error);
     }
 });
+
+// PUT - update komik by id
+app.put('/komik/:id', async (req, res) => {
+    const id = req.params.id;
+    const data = req.body;
+    try {
+        const komik = await db.Komik.findByPk(id);
+        if (!komik) {
+            return res.status(404).send({ message: 'Komik not found' });
+        }
+        await komik.update(data);
+        res.send({ message: 'Komik updated successfully', komik });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
