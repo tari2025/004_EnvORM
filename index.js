@@ -42,3 +42,29 @@ app.put('/komik/:id', async (req, res) => {
         res.status(500).send(error);
     }
 });
+
+// DELETE - hapus komik by id
+app.delete('/komik/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const komik = await db.Komik.findByPk(id);
+        if (!komik) {
+            return res.status(404).send({ message: 'Komik not found' });
+        }
+        await komik.destroy();
+        res.send({ message: 'Komik deleted successfully' });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+// Listen SETELAH sync database
+db.sequelize.sync()
+    .then(() => {
+        app.listen(port, () => {
+            console.log(`Server started on port ${port}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Error synchronizing database:', error);
+    });
